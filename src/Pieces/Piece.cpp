@@ -22,3 +22,7 @@ int Piece::get_x() const {
 int Piece::get_y() const {
     return m_y;
 }
+
+bool Piece::is_white_piece() const {
+    return m_is_white_piece;
+}

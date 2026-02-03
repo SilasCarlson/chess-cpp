@@ -25,3 +25,7 @@ void BoardSquare::draw() const {
         std::cout << "|" << m_piece->get_symbol() << "|";
     }
 }
+
+Piece* BoardSquare::get_piece() const {
+    return m_piece;
+}

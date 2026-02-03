@@ -9,6 +9,7 @@ class Game {
         void run();
 
     private:
+        static int get_position_from_letter(char letter);
         bool m_is_running;
         bool m_is_white_turn = true;
         Board m_board;

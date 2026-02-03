@@ -9,6 +9,7 @@ class BoardSquare {
         BoardSquare(int x, int y, Piece* piece = nullptr);
         void set_piece(Piece* piece);
         void draw() const;
+        Piece* get_piece() const;
 
     private:
         int m_x, m_y;

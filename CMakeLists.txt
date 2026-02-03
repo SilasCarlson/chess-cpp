@@ -3,7 +3,8 @@ project(chess)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(chess src/main.cpp
+add_executable(chess
+        src/main.cpp
         src/Board.cpp
         src/Board.h
         src/Pieces/Piece.cpp
@@ -16,8 +17,8 @@ add_executable(chess src/main.cpp
         src/Pieces/Pawn.h
         src/Pieces/Rook.cpp
         src/Pieces/Rook.h
-        src/Pieces/BIshop.cpp
-        src/Pieces/BIshop.h
+        src/Pieces/Bishop.cpp
+        src/Pieces/Bishop.h
         src/Pieces/Knight.cpp
         src/Pieces/Knight.h
         src/Pieces/Queen.cpp

@@ -6,6 +6,7 @@
 class Pawn : public Piece {
     public:
         Pawn(int x, int y, bool is_white_piece) : Piece(x, y, is_white_piece, 'P') {};
+        bool is_legal_move(int x, int y, Board const &board);
 };
 
 
