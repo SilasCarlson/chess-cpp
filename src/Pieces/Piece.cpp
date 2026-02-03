@@ -2,11 +2,17 @@
 
 #include <iostream>
 
-Piece::Piece(int x, int y, bool is_white_piece, char symbol) {
+Piece::Piece(const int x, const int y, const bool is_white_piece, const char symbol) {
     m_x = x;
     m_y = y;
     m_is_white_piece = is_white_piece;
     m_symbol = symbol;
+}
+
+void Piece::set_position(const int x, const int y) {
+    m_x = x;
+    m_y = y;
+    m_has_moved = true;
 }
 
 char Piece::get_symbol() const {
@@ -25,4 +31,8 @@ int Piece::get_y() const {
 
 bool Piece::is_white_piece() const {
     return m_is_white_piece;
+}
+
+bool Piece::has_moved() const {
+    return m_has_moved;
 }

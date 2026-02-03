@@ -29,3 +29,7 @@ void BoardSquare::draw() const {
 Piece* BoardSquare::get_piece() const {
     return m_piece;
 }
+
+bool BoardSquare::is_empty() const {
+    return m_piece == nullptr;
+}

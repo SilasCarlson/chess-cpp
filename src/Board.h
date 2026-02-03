@@ -10,9 +10,10 @@ class Piece;
 class Board {
     public:
         Board();
-        void draw();
+        void draw() const;
         bool move_piece(int initial_x, int initial_y, int final_x, int final_y);
         bool is_white_piece(int x, int y) const;
+        BoardSquare get_board_square(int x, int y) const;
 
     private:
         BoardSquare m_board_squares[8][8];
@@ -20,6 +21,7 @@ class Board {
         int m_width = 8;
         int m_height = 8;
         void set_board_square_piece(int x, int y, Piece* piece);
+        bool king_is_in_check(bool is_white_piece) const;
 
 };
 

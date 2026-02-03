@@ -10,6 +10,7 @@ class BoardSquare {
         void set_piece(Piece* piece);
         void draw() const;
         Piece* get_piece() const;
+        bool is_empty() const;
 
     private:
         int m_x, m_y;

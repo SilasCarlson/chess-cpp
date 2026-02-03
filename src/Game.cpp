@@ -8,6 +8,20 @@ Game::Game() {
     m_board = Board();
 }
 
+int Game::get_position_from_letter(char const letter) {
+    switch (letter) {
+        case 'a': return 0;
+        case 'b': return 1;
+        case 'c': return 2;
+        case 'd': return 3;
+        case 'e': return 4;
+        case 'f': return 5;
+        case 'g': return 6;
+        case 'h': return 7;
+        default:  return 8;
+    }
+}
+
 void Game::run() {
     // initialize variables
     std::string initial_position, final_position;
@@ -46,19 +60,5 @@ void Game::run() {
                 }
             }
         }
-    }
-}
-
-int Game::get_position_from_letter(char const letter) {
-    switch (letter) {
-        case 'a': return 0;
-        case 'b': return 1;
-        case 'c': return 2;
-        case 'd': return 3;
-        case 'e': return 4;
-        case 'f': return 5;
-        case 'g': return 6;
-        case 'h': return 7;
-        default:  return 8;
     }
 }
