@@ -14,6 +14,7 @@ class Board {
         bool move_piece(int initial_x, int initial_y, int final_x, int final_y);
         bool is_white_piece(int x, int y) const;
         BoardSquare get_board_square(int x, int y) const;
+        bool king_is_in_checkmate(bool is_white_piece) const;
 
     private:
         BoardSquare m_board_squares[8][8];

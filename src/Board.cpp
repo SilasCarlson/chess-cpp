@@ -113,13 +113,57 @@ bool Board::king_is_in_check(const bool is_white_piece) const {
     }
 
     for (const std::unique_ptr<Piece> &piece : m_pieces) {
-        if (piece->is_legal_move(king_x, king_y, *this)) {
-            std::cout << "King is in check!" << std::endl;
-            //return true;
+        if (piece->is_legal_move(king_x, king_y, *this) && piece->is_white_piece() != is_white_piece
+            && m_board_squares[piece->get_y()][piece->get_x()].get_piece() == piece.get()) {
+            std::cout << "That move will place your King in check!" << std::endl;
+            return true;
         }
     }
 
     return false;
+}
+
+bool Board::king_is_in_checkmate(bool is_white_piece) const {
+    // Get the King piece
+    const Piece* king = nullptr;
+    const char king_symbol = is_white_piece ? 'K' : 'k';
+    for (const std::unique_ptr<Piece> &piece : m_pieces) {
+        if (piece->get_symbol() == king_symbol) {
+            king = piece.get();
+        }
+    }
+
+    // Ensure that we don't have a null pointer (even tho this should never really happen)
+    // failsafe
+    if (king == nullptr) return true;
+
+    // ensure the king is currently in check
+    if (!king_is_in_check(is_white_piece)) return false;
+
+    // if king cannot move without being sent into check
+    bool king_can_escape = false;
+    std::vector<std::pair<int, int>> king_legal_moves = king->get_legal_moves(*this);
+    for (std::pair<int, int> position : king_legal_moves) {
+        bool square_blocked = false;
+        for (const std::unique_ptr<Piece> &piece : m_pieces) {
+            if (piece->is_legal_move(position.first, position.second, *this)) {
+                square_blocked = true;
+            }
+        }
+
+        if (!square_blocked) {
+            king_can_escape = true;
+        }
+    }
+
+    // if the king can escape then he is not currently in checkmate
+    if (king_can_escape) return false;
+
+    // todo: if a piece can take the attacking piece
+
+    // todo: if a piece can block the check
+
+    return true;
 }
 
 bool Board::move_piece(int const initial_x, int const initial_y, int const final_x, int const final_y) {
@@ -137,24 +181,27 @@ bool Board::move_piece(int const initial_x, int const initial_y, int const final
             // delete the piece on the destination square (if it exists)
             Piece* piece_destination = m_board_squares[final_y][final_x].get_piece();
 
-            m_board_squares[initial_y][initial_x].set_piece(nullptr);
-            m_board_squares[final_y][final_x].set_piece(piece);
+            // prevent the player from taking over their own piece essentially
+            if (piece_destination == nullptr || piece->is_white_piece() != piece_destination->is_white_piece()) {
+                m_board_squares[initial_y][initial_x].set_piece(nullptr);
+                m_board_squares[final_y][final_x].set_piece(piece);
 
-            piece->set_position(final_x, final_y);
+                piece->set_position(final_x, final_y);
 
-            if (king_is_in_check(piece->is_white_piece())) {
-                // undo the movement
-                m_board_squares[initial_y][initial_x].set_piece(piece);
-                m_board_squares[final_y][final_x].set_piece(piece_destination);
-                piece->set_position(initial_x, initial_y);
+                if (king_is_in_check(piece->is_white_piece())) {
+                    // undo the movement
+                    m_board_squares[initial_y][initial_x].set_piece(piece);
+                    m_board_squares[final_y][final_x].set_piece(piece_destination);
+                    piece->set_position(initial_x, initial_y);
 
-                // exit
-                return false;
+                    // exit
+                    return false;
+                }
+
+                delete piece_destination; // delete this from memory
+
+                return true;
             }
-
-            delete piece_destination; // delete this from memory
-
-            return true;
         }
     }
 

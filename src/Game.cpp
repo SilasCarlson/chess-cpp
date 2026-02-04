@@ -60,5 +60,12 @@ void Game::run() {
                 }
             }
         }
+
+        // win detection
+        if (m_board.king_is_in_checkmate(m_is_white_turn)) {
+            m_board.draw();
+            std::cout << "Checkmate!" << std::endl;
+            m_is_running = false;
+        }
     }
 }

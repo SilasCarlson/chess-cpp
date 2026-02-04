@@ -6,7 +6,7 @@
 class Rook : public Piece {
     public:
         Rook(int x, int y, bool is_white_piece) : Piece(x, y, is_white_piece, 'R') {};
-        bool is_legal_move(int x, int y, Board const &board);
+        bool is_legal_move(int x, int y, const Board &board) const override;
 };
 
 
