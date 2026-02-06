@@ -25,7 +25,7 @@ class Board {
         int m_width = 8;
         int m_height = 8;
         void set_board_square_piece(int x, int y, Piece* piece);
-        bool king_is_in_check(bool is_white_piece) const;
+        bool king_is_in_check(bool is_white_piece);
         Piece* m_last_moved_piece = nullptr;
         int m_pieces_moved = 0;
         std::optional<std::pair<int, int>> m_en_passant_target = std::nullopt;

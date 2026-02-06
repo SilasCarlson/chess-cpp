@@ -100,7 +100,7 @@ bool Board::is_white_piece(int const x, int const y) const {
     return false;
 }
 
-bool Board::king_is_in_check(const bool is_white_piece) const {
+bool Board::king_is_in_check(const bool is_white_piece) {
     // get the position of the king
     int king_x = 0;
     int king_y = 0;
@@ -220,6 +220,11 @@ bool Board::move_piece(int const initial_x, int const initial_y, int const final
 
                     // exit early
                     return false;
+                }
+
+                if (m_en_passant_target != std::nullopt) {
+                    piece_destination = m_board_squares[m_en_passant_target->second][m_en_passant_target->first].get_piece();
+                    m_board_squares[m_en_passant_target->second][m_en_passant_target->first].set_piece(nullptr);
                 }
 
                 delete piece_destination; // delete this john from memory
