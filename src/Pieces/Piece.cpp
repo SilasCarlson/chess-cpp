@@ -11,18 +11,26 @@ Piece::Piece(const int x, const int y, const bool is_white_piece, const char sym
     m_symbol = symbol;
 }
 
-std::vector<std::pair<int, int>> Piece::get_legal_moves(const Board &board) const {
+std::vector<std::pair<int, int>> Piece::get_all_possible_move_destinations(Board &board) const {
     std::vector<std::pair<int, int>> legal_moves;
 
     for (int y = 0; y < 8; y++) {
         for (int x = 0; x < 8; x++) {
-            if (is_legal_move(x, y, board) && (board.get_board_square(x, y).get_piece() == nullptr || board.get_board_square(x, y).get_piece()->is_white_piece() != is_white_piece())) {
+            if (can_move_to(x, y, board) && (board.get_board_square(x, y).get_piece() == nullptr || board.get_board_square(x, y).get_piece()->is_white_piece() != is_white_piece())) {
                 legal_moves.emplace_back(x, y);
             }
         }
     }
 
     return legal_moves;
+}
+
+void Piece::increment_moves() {
+    m_moves++;
+}
+
+int Piece::get_moves() const {
+    return m_moves;
 }
 
 void Piece::set_position(const int x, const int y) {
@@ -34,6 +42,10 @@ void Piece::set_position(const int x, const int y) {
 char Piece::get_symbol() const {
     if (!m_is_white_piece) return static_cast<char>(std::tolower(m_symbol));
 
+    return m_symbol;
+}
+
+char Piece::get_base_symbol() const {
     return m_symbol;
 }
 

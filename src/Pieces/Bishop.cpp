@@ -3,7 +3,7 @@
 
 #include "../Board.h"
 
-bool Bishop::is_legal_move(const int x, const int y, const Board &board) const {
+bool Bishop::can_move_to(const int x, const int y, Board &board) const {
     // diagonal movement
     if (abs(get_x() - x) == abs(get_y() - y)) {
         // ensure there are no pieces in the way

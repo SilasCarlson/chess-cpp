@@ -1,7 +1,7 @@
 #include "Rook.h"
 #include "../Board.h"
 
-bool Rook::is_legal_move(int const x, int const y, const Board &board) const {
+bool Rook::can_move_to(int const x, int const y, Board &board) const {
     // straight movement
     if (get_x() == x) {
         // ensure there are no pieces in the way

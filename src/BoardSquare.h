@@ -11,6 +11,8 @@ class BoardSquare {
         void draw() const;
         Piece* get_piece() const;
         bool is_empty() const;
+        int get_x() const;
+        int get_y() const;
 
     private:
         int m_x, m_y;

@@ -6,7 +6,7 @@
 class Knight : public Piece {
     public:
         Knight(int x, int y, bool is_white_piece) : Piece(x, y, is_white_piece, 'N') {};
-        bool is_legal_move(int x, int y, const Board &board) const override;
+        bool can_move_to(int x, int y, Board &board) const override;
 };
 
 

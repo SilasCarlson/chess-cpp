@@ -33,3 +33,11 @@ Piece* BoardSquare::get_piece() const {
 bool BoardSquare::is_empty() const {
     return m_piece == nullptr;
 }
+
+int BoardSquare::get_x() const {
+    return m_x;
+}
+
+int BoardSquare::get_y() const {
+    return m_y;
+}
