@@ -8,13 +8,9 @@ BoardSquare::BoardSquare() {
     m_piece = nullptr;
 }
 
-BoardSquare::BoardSquare(int x, int y, Piece* piece) {
+BoardSquare::BoardSquare(const int x, const int y, Piece* piece) {
     m_x = x;
     m_y = y;
-    m_piece = piece;
-}
-
-void BoardSquare::set_piece(Piece* piece) {
     m_piece = piece;
 }
 
@@ -24,6 +20,10 @@ void BoardSquare::draw() const {
     } else {
         std::cout << "|" << m_piece->get_symbol() << "|";
     }
+}
+
+void BoardSquare::set_piece(Piece* piece) {
+    m_piece = piece;
 }
 
 Piece* BoardSquare::get_piece() const {

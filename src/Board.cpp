@@ -86,8 +86,122 @@ Board::Board() {
     set_board_square_piece(4, 7, m_pieces.back().get());
 }
 
+void Board::draw() const {
+    std::cout << "   a  b  c  d  e  f  g  h" << std::endl;
+    for (int y = 0; y < 8; y++) {
+        std::cout << "  +-++-++-++-++-++-++-++-+" << std::endl;
+        std::cout << 8 - y << " ";
+        for (int x = 0; x < 8; x++) {
+            m_board_squares[y][x].draw();
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "  +-++-++-++-++-++-++-++-+" << std::endl;
+    std::cout << "   a  b  c  d  e  f  g  h" << std::endl;
+}
+
+bool Board::move_piece(int const initial_x, int const initial_y, int const final_x, int const final_y) {
+    // steps
+    // 1. grab corresponding piece
+    // 2. ensure it exists
+    // 3. make sure this is a valid move
+    // 4. if there is a piece on the destination then destroy it
+    // 5. update the initial position's piece
+    // 6. update the final position's piece
+    Piece* piece = m_board_squares[initial_y][initial_x].get_piece();
+
+    if (piece != nullptr) {
+        if (piece->can_move_to(final_x, final_y, *this)) {
+            // delete the piece on the destination square (if it exists)
+            Piece* piece_destination = m_board_squares[final_y][final_x].get_piece();
+
+            // prevent the player from taking over their own piece essentially
+            if (piece_destination == nullptr || piece->is_white_piece() != piece_destination->is_white_piece()) {
+                // move the pieces around
+                set_board_square_piece(initial_x, initial_y, nullptr);
+                set_board_square_piece(final_x, final_y, piece);
+                piece->set_position(final_x, final_y);
+
+                // Ensure that with the new updated position this does
+                // not place the King in check
+                if (king_is_in_check(piece->is_white_piece())) {
+                    // undo the movement
+                    set_board_square_piece(initial_x, initial_y, piece);
+                    set_board_square_piece(final_x, final_y, piece_destination);
+                    piece->set_position(initial_x, initial_y);
+
+                    // exit early
+                    return false;
+                }
+
+                if (m_en_passant_target != std::nullopt) {
+                    piece_destination = m_board_squares[m_en_passant_target->second][m_en_passant_target->first].get_piece();
+                    m_board_squares[m_en_passant_target->second][m_en_passant_target->first].set_piece(nullptr);
+                }
+
+                if (piece->get_base_symbol() == 'P' && (final_y == 0 || final_y == 7)) {
+                    promote_pawn(piece);
+                }
+
+                delete piece_destination; // delete this john from memory
+
+                piece->increment_moves();
+                m_last_moved_piece = piece;
+                m_pieces_moved++;
+                m_en_passant_target = std::nullopt;
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void Board::promote_pawn(const Piece* piece) {
+    // get user input
+    std::string user_input;
+    std::cout << "What will you promote your pawn to?" << std::endl << "1. Rook" << std::endl << "2. Knight" << std::endl << "3. Bishop" << std::endl << "4. Queen" << std::endl;
+    std::cin >> user_input;
+
+    // get props from the piece before deleting it
+    const int x = piece->get_x();
+    const int y = piece->get_y();
+    const bool is_white_piece = piece->is_white_piece();
+    delete piece;
+
+    // we will assume the player will most likely choose a queen (so this is the default if no other choice is chosen)
+    switch (std::stoi(user_input)) {
+        case 1:
+            m_pieces.emplace_back(std::make_unique<Rook>(x, y, is_white_piece));
+            break;
+
+        case 2:
+            m_pieces.emplace_back(std::make_unique<Knight>(x, y, is_white_piece));
+            break;
+
+        case 3:
+            m_pieces.emplace_back(std::make_unique<Bishop>(x, y, is_white_piece));
+            break;
+
+        default:
+            m_pieces.emplace_back(std::make_unique<Queen>(x, y, is_white_piece));
+            break;
+    }
+
+    m_board_squares[y][x].set_piece(m_pieces.back().get());
+}
+
+void Board::set_en_passant_target(const int x, const int y) {
+    m_en_passant_target = {x, y};
+}
+
 void Board::set_board_square_piece(int x, int y, Piece* piece) {
     m_board_squares[y][x].set_piece(piece);
+}
+
+BoardSquare Board::get_board_square(const int x, const int y) const {
+    return m_board_squares[y][x];
 }
 
 bool Board::is_white_piece(int const x, int const y) const {
@@ -95,28 +209,6 @@ bool Board::is_white_piece(int const x, int const y) const {
 
     if (piece != nullptr) {
         return piece->is_white_piece();
-    }
-
-    return false;
-}
-
-bool Board::king_is_in_check(const bool is_white_piece) {
-    // get the position of the king
-    int king_x = 0;
-    int king_y = 0;
-    const char king_symbol = is_white_piece ? 'K' : 'k';
-    for (const std::unique_ptr<Piece> &piece : m_pieces) {
-        if (piece->get_symbol() == king_symbol) {
-            king_x = piece->get_x();
-            king_y = piece->get_y();
-        }
-    }
-
-    for (const std::unique_ptr<Piece> &piece : m_pieces) {
-        if (piece->can_move_to(king_x, king_y, *this) && piece->is_white_piece() != is_white_piece
-            && m_board_squares[piece->get_y()][piece->get_x()].get_piece() == piece.get()) {
-            return true;
-        }
     }
 
     return false;
@@ -188,82 +280,28 @@ bool Board::king_is_in_checkmate(bool is_white_piece) {
     return true;
 }
 
-bool Board::move_piece(int const initial_x, int const initial_y, int const final_x, int const final_y) {
-    // steps
-    // 1. grab corresponding piece
-    // 2. ensure it exists
-    // 3. make sure this is a valid move
-    // 4. if there is a piece on the destination then destroy it
-    // 5. update the initial position's piece
-    // 6. update the final position's piece
-    Piece* piece = m_board_squares[initial_y][initial_x].get_piece();
+bool Board::king_is_in_check(const bool is_white_piece) {
+    // get the position of the king
+    int king_x = 0;
+    int king_y = 0;
+    const char king_symbol = is_white_piece ? 'K' : 'k';
+    for (const std::unique_ptr<Piece> &piece : m_pieces) {
+        if (piece->get_symbol() == king_symbol) {
+            king_x = piece->get_x();
+            king_y = piece->get_y();
+        }
+    }
 
-    if (piece != nullptr) {
-        if (piece->can_move_to(final_x, final_y, *this)) {
-            // delete the piece on the destination square (if it exists)
-            Piece* piece_destination = m_board_squares[final_y][final_x].get_piece();
-
-            // prevent the player from taking over their own piece essentially
-            if (piece_destination == nullptr || piece->is_white_piece() != piece_destination->is_white_piece()) {
-                // move the pieces around
-                set_board_square_piece(initial_x, initial_y, nullptr);
-                set_board_square_piece(final_x, final_y, piece);
-                piece->set_position(final_x, final_y);
-
-                // Ensure that with the new updated position this does
-                // not place the King in check
-                if (king_is_in_check(piece->is_white_piece())) {
-                    // undo the movement
-                    set_board_square_piece(initial_x, initial_y, piece);
-                    set_board_square_piece(final_x, final_y, piece_destination);
-                    piece->set_position(initial_x, initial_y);
-
-                    // exit early
-                    return false;
-                }
-
-                if (m_en_passant_target != std::nullopt) {
-                    piece_destination = m_board_squares[m_en_passant_target->second][m_en_passant_target->first].get_piece();
-                    m_board_squares[m_en_passant_target->second][m_en_passant_target->first].set_piece(nullptr);
-                }
-
-                delete piece_destination; // delete this john from memory
-
-                piece->increment_moves();
-                m_last_moved_piece = piece;
-                m_pieces_moved++;
-                m_en_passant_target = std::nullopt;
-
-                return true;
-            }
+    for (const std::unique_ptr<Piece> &piece : m_pieces) {
+        if (piece->can_move_to(king_x, king_y, *this) && piece->is_white_piece() != is_white_piece
+            && m_board_squares[piece->get_y()][piece->get_x()].get_piece() == piece.get()) {
+            return true;
         }
     }
 
     return false;
 }
 
-void Board::draw() const {
-    std::cout << "   a  b  c  d  e  f  g  h" << std::endl;
-    for (int y = 0; y < 8; y++) {
-        std::cout << "  +-++-++-++-++-++-++-++-+" << std::endl;
-        std::cout << 8 - y << " ";
-        for (int x = 0; x < 8; x++) {
-            m_board_squares[y][x].draw();
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "  +-++-++-++-++-++-++-++-+" << std::endl;
-    std::cout << "   a  b  c  d  e  f  g  h" << std::endl;
-}
-
-BoardSquare Board::get_board_square(const int x, const int y) const {
-    return m_board_squares[y][x];
-}
-
 Piece* Board::get_last_moved_piece() const {
     return m_last_moved_piece;
-}
-
-void Board::set_en_passant_target(const int x, const int y) {
-    m_en_passant_target = {x, y};
 }

@@ -4,22 +4,13 @@
 #include <ostream>
 
 Game::Game() {
-    m_is_running = true;
+    m_is_running = false;
     m_board = Board();
 }
 
-int Game::get_position_from_letter(char const letter) {
-    switch (letter) {
-        case 'a': return 0;
-        case 'b': return 1;
-        case 'c': return 2;
-        case 'd': return 3;
-        case 'e': return 4;
-        case 'f': return 5;
-        case 'g': return 6;
-        case 'h': return 7;
-        default:  return 8;
-    }
+void Game::start() {
+    m_is_running = true;
+    run();
 }
 
 void Game::run() {
@@ -67,5 +58,19 @@ void Game::run() {
             std::cout << "Checkmate!" << std::endl;
             m_is_running = false;
         }
+    }
+}
+
+int Game::get_position_from_letter(char const letter) {
+    switch (letter) {
+        case 'a': return 0;
+        case 'b': return 1;
+        case 'c': return 2;
+        case 'd': return 3;
+        case 'e': return 4;
+        case 'f': return 5;
+        case 'g': return 6;
+        case 'h': return 7;
+        default:  return 8;
     }
 }

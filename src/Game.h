@@ -5,14 +5,21 @@
 
 class Game {
     public:
+        // constructor/destructor
         Game();
-        void run();
+
+        // misc
+        void start();
 
     private:
-        static int get_position_from_letter(char letter);
+        // attributes/props
         bool m_is_running;
         bool m_is_white_turn = true;
         Board m_board;
+
+        // methods
+        [[nodiscard]] static int get_position_from_letter(char letter);
+        void run();
 };
 
 

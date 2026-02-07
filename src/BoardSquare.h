@@ -5,14 +5,21 @@
 
 class BoardSquare {
     public:
+        // constructors/destructors
         BoardSquare();
         BoardSquare(int x, int y, Piece* piece = nullptr);
-        void set_piece(Piece* piece);
+
+        // misc
         void draw() const;
-        Piece* get_piece() const;
-        bool is_empty() const;
-        int get_x() const;
-        int get_y() const;
+
+        // setters
+        void set_piece(Piece* piece);
+
+        // getters
+        [[nodiscard]] Piece* get_piece() const;
+        [[nodiscard]] bool is_empty() const;
+        [[nodiscard]] int get_x() const;
+        [[nodiscard]] int get_y() const;
 
     private:
         int m_x, m_y;
