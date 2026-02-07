@@ -24,6 +24,10 @@ except those provided by the Standard Library (STL). The project can be built an
 - [STUDYPLAN.dev](https://www.studyplan.dev/cpp)
 - [hacking C++](https://hackingcpp.com/)
 
+# AI Disclosure
+
+No AI was used during the process of the project.
+
 # Future Work
 
 - A GUI, rather than a CLI
