@@ -135,15 +135,12 @@ bool Board::move_piece(int const initial_x, int const initial_y, int const final
                 }
 
                 if (m_en_passant_target != std::nullopt) {
-                    piece_destination = m_board_squares[m_en_passant_target->second][m_en_passant_target->first].get_piece();
                     m_board_squares[m_en_passant_target->second][m_en_passant_target->first].set_piece(nullptr);
                 }
 
                 if (piece->get_base_symbol() == 'P' && (final_y == 0 || final_y == 7)) {
                     promote_pawn(piece);
                 }
-
-                delete piece_destination; // delete this john from memory
 
                 piece->increment_moves();
                 m_last_moved_piece = piece;
@@ -168,7 +165,6 @@ void Board::promote_pawn(const Piece* piece) {
     const int x = piece->get_x();
     const int y = piece->get_y();
     const bool is_white_piece = piece->is_white_piece();
-    delete piece;
 
     // we will assume the player will most likely choose a queen (so this is the default if no other choice is chosen)
     switch (std::stoi(user_input)) {
@@ -196,7 +192,7 @@ void Board::set_en_passant_target(const int x, const int y) {
     m_en_passant_target = {x, y};
 }
 
-void Board::set_board_square_piece(int x, int y, Piece* piece) {
+void Board::set_board_square_piece(const int x, const int y, Piece* piece) {
     m_board_squares[y][x].set_piece(piece);
 }
 

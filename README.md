@@ -11,7 +11,7 @@ detection, pawn promotion and en passant, and piece movement/capture. The projec
 the pieces. The purpose of this project was to learn how to make a more complex project in C++ while learning a bit of
 C++. The project was also to learn how chess games (and their more complex logic) are implemented in a programming sense.
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://www.youtube.com/watch?v=7xUgrDUomIY)
 
 # Development Environment
 
